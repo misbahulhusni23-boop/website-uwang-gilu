@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Petualangan Santri Menuju Pondok</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#eef3ea;--fg:#1f2b1f;--card:#fff;--accent:#2f7d4f;--line:#c9d8c5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101712;--fg:#e6f0e4;--card:#18231b;--accent:#5fc388;--line:#2a3a2d}}
+:root[data-theme="dark"]{--bg:#101712;--fg:#e6f0e4;--card:#18231b;--accent:#5fc388;--line:#2a3a2d}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column;align-items:center;padding:10px}
+#app{width:100%;max-width:640px;position:relative}
+#hud{display:flex;justify-content:space-between;font-weight:600;font-size:.95rem;margin-bottom:6px}
+canvas{width:100%;display:block;border-radius:12px;border:3px solid var(--line)}
+#dlg{position:absolute;left:0;right:0;top:34px;bottom:0;display:flex;align-items:center;justify-content:center;padding:14px}
+#box{background:var(--card);border:2px solid var(--accent);border-radius:14px;padding:16px;max-width:420px;text-align:center;box-shadow:0 6px 24px #0006}
+#box h2{margin:0 0 6px;font-size:1.1rem}
+#box p{line-height:1.55;margin:0 0 12px;font-size:.95rem}
+button{font-family:inherit}
+#go{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:10px 22px;font-size:1rem}
+#pad{display:flex;justify-content:space-between;width:100%;max-width:640px;margin-top:10px;gap:8px}
+#pad button{flex:1;height:58px;font-size:1.5rem;border:2px solid var(--line);background:var(--card);color:var(--fg);border-radius:12px;touch-action:none;user-select:none}
+#pad button:active{background:var(--accent);color:#fff}
+small{opacity:.7;margin-top:8px}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="hud"><span id="hp"></span><span id="sn"></span><span id="bk"></span></div>
+<canvas id="c" width="640" height="360"></canvas>
+<div id="dlg"><div id="box"><h2 id="dh"></h2><p id="dp"></p><button id="go">Lanjut</button></div></div>
+</div>
+<div id="pad"><button id="L">◀</button><button id="J">⬆ Lompat</button><button id="R">▶</button></div>
+<small>Panah / WASD + Spasi. Ambil 📖🍎⭐ dan hindari rintangan!</small>
+<script>
+const FACE="foto.jpg"; // foto wajah persegi, satu folder dengan file ini
+const cv=document.getElementById('c'),x=cv.getContext('2d'),W=640,H=360,GY=300;
+const img=new Image();img.src=FACE;
+const ST=[
+{n:"1. Desa Halaman",sky:["#ffd9a0","#bfe8ff"],gr:"#7cbf5a",L:4200,bg:["🌴","🏡","🌾","🐓","🐐"],ob:["🪨","🐔"],it:"🍎",goal:"🚏",
+ i:"Pagi hari. Ibu memeluk Misbahul sambil berdoa. 'Semoga ilmumu bermanfaat, Nak.' Saatnya berangkat ke pondok pesantren yang jauh!",o:"Misbahul tiba di halte. Bus datang, tapi jalan masih panjang."},
+{n:"2. Jalan Sawah Berhujan",sky:["#8fa5b8","#c5d3dc"],gr:"#5f9a52",L:4600,bg:["🌾","🌾","🛖","🌳","🦆"],ob:["💧","🪨"],it:"📖",goal:"🌉",rain:1,
+ i:"Hujan turun di jalan sawah. Hati-hati genangan air! Kumpulkan 📖 sebagai bekal ilmu.",o:"Hujan reda. Di depan ada sungai dengan jembatan kayu."},
+{n:"3. Sungai & Jembatan",sky:["#bfe8ff","#e6f6ff"],gr:"#8d7b55",L:5000,bg:["🌊","🌳","🪵","🐸","🌿"],ob:["🪵","🐊"],it:"⭐",goal:"🛶",
+ i:"Jembatan kayu licin dan banyak rintangan di tepi sungai. Lompatlah dengan cermat!",o:"Misbahul menyeberang sungai dengan selamat. Hutan kecil menanti."},
+{n:"4. Hutan Menjelang Senja",sky:["#f6a56a","#5b4b8a"],gr:"#3d6b45",L:5200,bg:["🌲","🌳","🌲","🦉","🍄"],ob:["🐍","🪨","🕸️"],it:"⭐",goal:"🏮",
+ i:"Matahari mulai terbenam. Hutan ini sunyi dan banyak ular. Teruslah melangkah dan jangan putus asa.",o:"Di kejauhan terlihat lampu-lampu pondok
